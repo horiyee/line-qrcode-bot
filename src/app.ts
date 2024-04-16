@@ -25,8 +25,7 @@ app.get("/images/:uuid", async (req, res) => {
     .then((result) => {
       const base64Image = result.value;
 
-      const html = `
-<!DOCTYPE HTML>
+      const html = `<!DOCTYPE HTML>
 <html>
   <head>
     <title>QR Code</title>
