@@ -61,7 +61,8 @@ bot.on("message", async (event) => {
       const url = `${HOST}/images/${now}`;
 
       await event.reply([
-        `"${eventMessageText}" をQRコードに変換しました！下のリンクから開いてね！`,
+        `"${eventMessageText}" をQRコードに変換しました！`,
+        "下のリンクから開いてね！",
         url,
       ]);
     })
