@@ -24,20 +24,17 @@ app.get("/images/:id", async (req, res) => {
     .then((result) => {
       const base64Image = result.value;
 
-      const tag = `<img src="${base64Image}" />`;
-
       const html = `
         <!DOCTYPE HTML>
         <html>
           <head>
+            <meta property="og:image" content="${base64Image}" />
           </head>
           <body>
-            ${tag}
+            <img src="${base64Image}" />
           </body>
         </html>
       `;
-
-      console.log({ tag, html });
 
       res.setHeader("Content-Type", "text/html");
       res.send(html);
