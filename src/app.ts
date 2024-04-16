@@ -1,5 +1,5 @@
 import { json, linebot, opine, qrcode, uuid } from "./deps.ts";
-import { ImageUuidCollisionError } from "./types.ts";
+import { ImageUuidCollisionError, QRCodeImageNotFoundError } from "./types.ts";
 
 const HOST = Deno.env.get("HOST");
 const PORT = Number(Deno.env.get("PORT"));
@@ -55,6 +55,7 @@ bot.on("message", async (event) => {
   await qrcode(eventMessageText)
     .then(async (base64Image) => {
       const imageUuid = uuid.v1.generate().toString();
+
       const kv = await Deno.openKv();
 
       if ((await kv.get(["qrcode", imageUuid])).versionstamp !== null) {
@@ -82,6 +83,26 @@ bot.on("message", async (event) => {
         "それでもうまくいかない場合は他の文章を送ってみてくれよな！",
       ]);
     });
+});
+
+app.delete("/images/:uuid", async (req, res) => {
+  const imageUuid = req.params.uuid;
+
+  const kv = await Deno.openKv();
+
+  await kv
+    .get(["qrcode", imageUuid])
+    .then(async (result) => {
+      if (result.versionstamp !== null) {
+        await kv.delete(["qrcode", imageUuid]);
+        res.sendStatus(204);
+      } else {
+        throw new QRCodeImageNotFoundError(
+          `qrcode image not found. uuid = ${imageUuid}`,
+        );
+      }
+    })
+    .catch(console.error);
 });
 
 app.listen(PORT, () =>
