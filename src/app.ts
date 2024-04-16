@@ -29,8 +29,10 @@ app.get("/images/:id", async (req, res) => {
         <html>
           <head>
             <title>QR Code</title>
-            <link rel="icon" type="image/x-icon" href="${base64Image}" />
+            <meta property="og:title" content="QR Code" />
             <meta property="og:image" content="${base64Image}" />
+            <meta property="twitter:image" content="${base64Image}" />
+            <link rel="icon" type="image/x-icon" href="${base64Image}" />
           </head>
           <body>
             <img src="${base64Image}" />
