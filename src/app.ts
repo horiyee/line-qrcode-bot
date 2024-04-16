@@ -1,7 +1,6 @@
-import { qrcode } from "./deps.ts";
-import { json, linebot, opine } from "./deps.ts";
+import { json, linebot, opine, hexToBuffer, qrcode } from "./deps.ts";
 
-// const HOST = Deno.env.get("HOST");
+const HOST = Deno.env.get("HOST");
 const PORT = Number(Deno.env.get("PORT"));
 
 const options = {
@@ -26,10 +25,20 @@ bot.on("message", async (event) => {
 
       console.log({ eventMessageText, base64Image });
 
+      const buffer = hexToBuffer(`${base64Image}`);
+      const fileName = `${Date.now()}.jpg`;
+
+      await Deno.writeFile(
+        `../static/images/${fileName}`,
+        new Uint8Array(buffer),
+      );
+
+      const url = `${HOST}/images/${fileName}`;
+
       await event.reply({
         type: "image",
-        originalContentUrl: `${base64Image}`,
-        previewImageUrl: `${base64Image}`,
+        originalContentUrl: url,
+        previewImageUrl: url,
       });
     })
     .catch(console.error);
