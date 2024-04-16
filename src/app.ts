@@ -23,10 +23,24 @@ app.get("/images/:id", async (req, res) => {
     .get(["qrcode", id])
     .then((result) => {
       const base64Image = result.value;
-      console.log({ base64Image });
 
-      res.setHeader("Content-Type", "image/png");
-      res.send(base64Image);
+      const tag = `<img src="${base64Image}" />`;
+
+      const html = `
+        <!DOCTYPE HTML>
+        <html>
+          <head>
+          </head>
+          <body>
+            ${tag}
+          </body>
+        </html>
+      `;
+
+      console.log({ tag, html });
+
+      res.setHeader("Content-Type", "text/html");
+      res.send(html);
     })
     .catch(console.error);
 });
