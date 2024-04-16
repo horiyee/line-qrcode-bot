@@ -1,4 +1,5 @@
-import { json, linebot, opine, qrcode } from "./deps.ts";
+import { json, linebot, opine, qrcode, uuid } from "./deps.ts";
+import { ImageUuidCollisionError } from "./types.ts";
 
 const HOST = Deno.env.get("HOST");
 const PORT = Number(Deno.env.get("PORT"));
@@ -14,13 +15,13 @@ const bot = linebot(options);
 const app = opine();
 const linebotParser = bot.parser(json);
 
-app.get("/images/:id", async (req, res) => {
-  const id = req.params.id;
+app.get("/images/:uuid", async (req, res) => {
+  const imageUuid = req.params.uuid;
 
   const kv = await Deno.openKv();
 
   await kv
-    .get(["qrcode", id])
+    .get(["qrcode", imageUuid])
     .then((result) => {
       const base64Image = result.value;
 
@@ -53,15 +54,18 @@ bot.on("message", async (event) => {
 
   await qrcode(eventMessageText)
     .then(async (base64Image) => {
-      const now = Date.now();
-
+      const imageUuid = uuid.v1.generate().toString();
       const kv = await Deno.openKv();
 
-      console.log((await kv.get(["qrcode", `${now}`])).versionstamp);
+      if ((await kv.get(["qrcode", imageUuid])).versionstamp !== null) {
+        throw new ImageUuidCollisionError(
+          `image uuids collided. uuid = ${imageUuid}`,
+        );
+      }
 
-      await kv.set(["qrcode", `${now}`], base64Image);
+      await kv.set(["qrcode", `${imageUuid}`], base64Image);
 
-      const url = `${HOST}/images/${now}`;
+      const url = `${HOST}/images/${imageUuid}`;
 
       await event.reply([
         `"${eventMessageText}" をQRコードに変換しました！`,
