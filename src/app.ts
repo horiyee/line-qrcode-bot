@@ -26,6 +26,8 @@ bot.on("message", async (event) => {
 
       const dataUrl = base64Image.createDataURL();
 
+      console.log({ eventMessageText, dataUrl });
+
       await event.reply({
         type: "image",
         originalContentUrl: `${HOST}`,
