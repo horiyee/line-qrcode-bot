@@ -1,6 +1,9 @@
 import { qrcode } from "./deps.ts";
 import { json, linebot, opine } from "./deps.ts";
 
+const HOST = Deno.env.get("HOST");
+const PORT = Number(Deno.env.get("PORT"));
+
 const options = {
   channelId: Deno.env.get("CHANNEL_ID"),
   channelSecret: Deno.env.get("CHANNEL_SECRET"),
@@ -19,12 +22,19 @@ bot.on("message", async (event) => {
 
   await qrcode(eventMessageText)
     .then(async (base64Image) => {
-      console.log(base64Image);
-      await event.reply(`${eventMessageText}をQRコードに変換しました！`);
+      await event.reply(`"${eventMessageText}" をQRコードに変換しました！`);
+
+      const dataUrl = base64Image.createDataURL();
+
+      await event.reply({
+        type: "image",
+        originalContentUrl: `${HOST}`,
+        previewImageUrl: dataUrl,
+      });
     })
     .catch(console.error);
 });
 
-// const port = Deno.env.get("PORT") || 80;
-
-app.listen(8080, () => console.log(`line-qrcode-bot is running on port 8080`));
+app.listen(PORT, () =>
+  console.log(`line-qrcode-bot is running on port ${PORT}`),
+);
