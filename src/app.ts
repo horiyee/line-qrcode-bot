@@ -19,17 +19,13 @@ app.post("/callback", linebotParser);
 bot.on("message", async (event) => {
   const eventMessageText = event.message.text;
 
-  const qr = qrcode(eventMessageText);
-  console.log(qr);
-
   await qrcode(eventMessageText)
     .then(async (base64Image) => {
       await event.reply(`"${eventMessageText}" をQRコードに変換しました！`);
 
       console.log({ eventMessageText, base64Image });
 
-      base64Image.make();
-      console.log(base64Image.createDataURL());
+      console.log(base64Image.createASCII());
 
       const buffer = hexToBuffer(`${base64Image}`);
       const fileName = `${Date.now()}.jpg`;
