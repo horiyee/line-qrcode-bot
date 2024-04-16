@@ -25,6 +25,9 @@ bot.on("message", async (event) => {
 
       console.log({ eventMessageText, base64Image });
 
+      base64Image.make();
+      console.log(base64Image.createDataURL());
+
       const buffer = hexToBuffer(`${base64Image}`);
       const fileName = `${Date.now()}.jpg`;
 
