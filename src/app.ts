@@ -38,8 +38,7 @@ app.get("/images/:uuid", async (req, res) => {
   <body>
     <img src="${base64Image}" />
   </body>
-</html>
-      `;
+</html>`;
 
       res.setHeader("Content-Type", "text/html");
       res.send(html);
