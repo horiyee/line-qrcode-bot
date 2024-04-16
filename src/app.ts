@@ -14,6 +14,34 @@ const bot = linebot(options);
 const app = opine();
 const linebotParser = bot.parser(json);
 
+app.get("/images/:id", async (req, res) => {
+  const id = req.params.id;
+
+  const kv = await Deno.openKv();
+
+  await kv.get(["qrcode", id]).then((result) => {
+    const base64Image = result.value;
+
+    const tag = `<img src="${base64Image}" />`;
+
+    const html = `
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+        </head>
+        <body>
+          ${tag}
+        </body>
+      </html>
+    `;
+
+    console.log({ tag, html });
+
+    res.setHeader("Content-Type", "text/html");
+    res.send(html);
+  });
+});
+
 app.post("/callback", linebotParser);
 
 bot.on("message", async (event) => {
