@@ -21,14 +21,12 @@ app.get("/images/:id", async (req, res) => {
 
   await kv
     .get(["qrcode", id])
-    .then(async (result) => {
+    .then((result) => {
       const base64Image = result.value;
       console.log({ base64Image });
 
-      const file = await Deno.readFile(`${base64Image}`);
-
       res.setHeader("Content-Type", "image/png");
-      res.send(file);
+      res.send(base64Image);
     })
     .catch(console.error);
 });
