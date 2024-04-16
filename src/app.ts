@@ -19,27 +19,18 @@ app.get("/images/:id", async (req, res) => {
 
   const kv = await Deno.openKv();
 
-  await kv.get(["qrcode", id]).then((result) => {
-    const base64Image = result.value;
+  await kv
+    .get(["qrcode", id])
+    .then(async (result) => {
+      const base64Image = result.value;
+      console.log({ base64Image });
 
-    const tag = `<img src="${base64Image}" />`;
+      const file = await Deno.readFile(`${base64Image}`);
 
-    const html = `
-      <!DOCTYPE HTML>
-      <html>
-        <head>
-        </head>
-        <body>
-          ${tag}
-        </body>
-      </html>
-    `;
-
-    console.log({ tag, html });
-
-    res.setHeader("Content-Type", "text/html");
-    res.send(html);
-  });
+      res.setHeader("Content-Type", "image/png");
+      res.send(file);
+    })
+    .catch(console.error);
 });
 
 app.post("/callback", linebotParser);
