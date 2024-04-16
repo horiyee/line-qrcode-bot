@@ -1,7 +1,7 @@
 import { qrcode } from "./deps.ts";
 import { json, linebot, opine } from "./deps.ts";
 
-const HOST = Deno.env.get("HOST");
+// const HOST = Deno.env.get("HOST");
 const PORT = Number(Deno.env.get("PORT"));
 
 const options = {
@@ -28,8 +28,8 @@ bot.on("message", async (event) => {
 
       await event.reply({
         type: "image",
-        originalContentUrl: `${HOST}`,
-        previewImageUrl: base64Image,
+        originalContentUrl: `${base64Image}`,
+        previewImageUrl: `${base64Image}`,
       });
     })
     .catch(console.error);
