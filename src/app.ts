@@ -1,6 +1,6 @@
 import { json, linebot, opine, qrcode } from "./deps.ts";
 
-// const HOST = Deno.env.get("HOST");
+const HOST = Deno.env.get("HOST");
 const PORT = Number(Deno.env.get("PORT"));
 
 const options = {
@@ -23,16 +23,17 @@ bot.on("message", async (event) => {
     .then(async (base64Image) => {
       await event.reply(`"${eventMessageText}" をQRコードに変換しました！`);
 
-      console.log({ eventMessageText, base64Image });
-
       const now = Date.now();
 
       const kv = await Deno.openKv();
       await kv.set(["qrcode", `${now}`], base64Image);
 
-      const url = await kv.get(["qrcode", `${now}`]);
-
-      console.log({ url });
+      const url = `${HOST}/images/${now}`;
+      await event.reply({
+        type: "image",
+        originalContentUrl: url,
+        previewImageUrl: url,
+      });
     })
     .catch(console.error);
 });
