@@ -1,7 +1,7 @@
 import { json, linebot, opine } from "./deps.ts";
 
 const options = {
-  channelId: Deno.env.get("CHANNER_ID"),
+  channelId: Deno.env.get("CHANNEL_ID"),
   channelSecret: Deno.env.get("CHANNEL_SECRET"),
   channelAccessToken: Deno.env.get("CHANNEL_ACCESS_TOKEN"),
   verify: true,
@@ -14,7 +14,7 @@ const linebotParser = bot.parser(json);
 app.post("/callback", linebotParser);
 
 bot.on("message", async (event) => {
-  await event.reply(event.message.text);
+  await event.reply(event.message.text).then(console.log);
 });
 
 // const port = Deno.env.get("PORT") || 80;
