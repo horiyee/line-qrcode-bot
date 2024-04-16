@@ -1,11 +1,4 @@
-import {
-  json,
-  linebot,
-  opine,
-  hexToBuffer,
-  qrcode,
-  encodeBase64,
-} from "./deps.ts";
+import { json, linebot, opine, qrcode } from "./deps.ts";
 
 const HOST = Deno.env.get("HOST");
 const PORT = Number(Deno.env.get("PORT"));
@@ -26,26 +19,40 @@ app.post("/callback", linebotParser);
 bot.on("message", async (event) => {
   const eventMessageText = event.message.text;
 
-  const base64Image = await qrcode(eventMessageText).catch(console.error);
+  await qrcode(eventMessageText)
+    .then(async (base64Image) => {
+      await event.reply(`"${eventMessageText}" をQRコードに変換しました！`);
 
-  await event.reply(`"${eventMessageText}" をQRコードに変換しました！`);
+      console.log({ eventMessageText, base64Image });
 
-  console.log({ eventMessageText, base64Image });
+      const tag = `<img src="${base64Image}" />`;
+      const html = `
+      <!DOCTYPE HTML>
+      <html>
+        <head>
+        </head>
+        <body>
+          ${tag}
+        </body>
+      </html>
+    `;
 
-  const fileName = `${Date.now()}.jpg`;
+      console.log({ html });
 
-  const image = encodeBase64(`${base64Image}`);
-  const buffer = hexToBuffer(image);
+      const now = Date.now();
+      const encoder = new TextEncoder();
 
-  await Deno.writeFile(`../static/images/${fileName}`, new Uint8Array(buffer));
+      await Deno.writeFile(`../public/${now}.html`, encoder.encode(html));
 
-  const url = `${HOST}/images/${fileName}`;
+      const url = `${HOST}/${now}.html`;
 
-  await event.reply({
-    type: "image",
-    originalContentUrl: url,
-    previewImageUrl: url,
-  });
+      await event.reply({
+        type: "image",
+        originalContentUrl: url,
+        previewImageUrl: url,
+      });
+    })
+    .catch(console.error);
 });
 
 app.listen(PORT, () =>
