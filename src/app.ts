@@ -61,11 +61,18 @@ bot.on("message", async (event) => {
       const url = `${HOST}/images/${now}`;
 
       await event.reply([
-        `"${eventMessageText}" をQRコードに変換しました！`,
+        `"${eventMessageText}" をQRコードに変換しました！下のリンクから開いてね！`,
         url,
       ]);
     })
-    .catch(console.error);
+    .catch(async (err) => {
+      console.error(err);
+
+      await event.reply([
+        "エラーが発生しました :(",
+        "送った文章が長すぎる場合、短くすれば成功するかもしれません！それでもうまくいかない場合は他の文字を送ってみてくれよな！",
+      ]);
+    });
 });
 
 app.listen(PORT, () =>
