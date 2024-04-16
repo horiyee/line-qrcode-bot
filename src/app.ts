@@ -56,6 +56,9 @@ bot.on("message", async (event) => {
       const now = Date.now();
 
       const kv = await Deno.openKv();
+
+      console.log((await kv.get(["qrcode", `${now}`])).versionstamp);
+
       await kv.set(["qrcode", `${now}`], base64Image);
 
       const url = `${HOST}/images/${now}`;
@@ -72,7 +75,7 @@ bot.on("message", async (event) => {
       await event.reply([
         "エラーが発生しました :(",
         "送った文章が長すぎる場合、短くすれば成功するかもしれません！",
-        "それでもうまくいかない場合は他の文字を送ってみてくれよな！",
+        "それでもうまくいかない場合は他の文章を送ってみてくれよな！",
       ]);
     });
 });
