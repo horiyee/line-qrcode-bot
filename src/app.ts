@@ -26,19 +26,20 @@ app.get("/images/:uuid", async (req, res) => {
       const base64Image = result.value;
 
       const html = `
-        <!DOCTYPE HTML>
-        <html>
-          <head>
-            <title>QR Code</title>
-            <meta property="og:title" content="QR Code" />
-            <meta property="og:image" content="${base64Image}" />
-            <meta property="twitter:image" content="${base64Image}" />
-            <link rel="icon" type="image/x-icon" href="${base64Image}" />
-          </head>
-          <body>
-            <img src="${base64Image}" />
-          </body>
-        </html>
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>QR Code</title>
+    <meta property="og:title" content="QR Code" />
+    <meta property="og:image" content="${base64Image}" />
+    <meta property="twitter:image" content="${base64Image}" />
+    <link rel="icon" type="image/x-icon" href="${base64Image}" />
+  </head>
+
+  <body>
+    <img src="${base64Image}" />
+  </body>
+</html>
       `;
 
       res.setHeader("Content-Type", "text/html");
