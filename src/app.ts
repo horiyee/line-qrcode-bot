@@ -24,14 +24,12 @@ bot.on("message", async (event) => {
     .then(async (base64Image) => {
       await event.reply(`"${eventMessageText}" をQRコードに変換しました！`);
 
-      const dataUrl = base64Image.createDataURL();
-
-      console.log({ eventMessageText, dataUrl });
+      console.log({ eventMessageText, base64Image });
 
       await event.reply({
         type: "image",
         originalContentUrl: `${HOST}`,
-        previewImageUrl: dataUrl,
+        previewImageUrl: base64Image,
       });
     })
     .catch(console.error);
