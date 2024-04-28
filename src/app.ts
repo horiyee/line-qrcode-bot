@@ -48,7 +48,8 @@ app.get("/images/:uuid", async (req, res) => {
 
 app.post("/callback", linebotParser);
 
-bot.on("message", async (event) => {
+// deno-lint-ignore no-explicit-any
+bot.on("message", async (event: any) => {
   const eventMessageText = event.message.text;
 
   await qrcode(eventMessageText)
